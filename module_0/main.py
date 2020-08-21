@@ -13,18 +13,38 @@ def score_game(game_core):
     return (score)
 
 
-def game_core_v2(number):
+def create_range(minimum, maximum):
+    return range(minimum, maximum + 1)
+
+
+def check_predict(number: int, search_range: list):
+    '''Метод для проверки числа, получает число и список вариантов.
+        Если число не подходит, сокращает список вариантов
+        Если число угадано, возвращает True'''
+    minimum = search_range[0]
+    maximum = search_range[1]
+    predict = np.random.randint(minimum, maximum)
+    if number != predict:
+        if number > predict:
+            return [predict, maximum+1]
+        elif number < predict:
+            return [minimum, predict+1]
+    else:
+        return True
+
+
+def game_core_v2(number: int):
     '''Сначала устанавливаем любое random число, а потом уменьшаем или увеличиваем его в зависимости от того, больше оно или меньше нужного.
        Функция принимает загаданное число и возвращает число попыток'''
     count = 1
-    predict = np.random.randint(1,101)
-    while number != predict:
-        count+=1
-        if number > predict:
-            predict += 1
-        elif number < predict:
-            predict -= 1
-    return(count) # выход из цикла, если угадали
+    search_range = [1, 101]
+    while True:
+        search_range = check_predict(number, search_range)
+        if search_range == True:
+            return(count)    # выход из цикла, если угадали
+        count += 1
+        if count > 101:  # выход из цикла, если что-то пошло не так
+            return 'Никогда'
 
 
 score_game(game_core_v2)
